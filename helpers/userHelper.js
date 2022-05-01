@@ -95,6 +95,7 @@ completeProfile:(data)=>{
     gender:prof.gender,
     height:prof.height,
     weight:prof.weight,
+    age:prof.age,
     bmi:0,
     photo:"",
    }

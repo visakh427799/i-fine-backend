@@ -75,47 +75,18 @@ router.post('/admin/getUserDetails',(req,res)=>{
 
 
 
-
-
-
-
-
-// router.post('/email-verify', (req, res) => {
-//   // console.log(req.body);
-//   // res.cookie('otp', '1986', { expires: new Date(Date.now() + 900000), httpOnly: true });
-
-//   userHelper.mailSend(req.body.email).then(() => {
-//     res.json({ "success": true })
-//   }).catch((val) => {
-//     res.json({ "success": false, "val": val })
-//   })
-// })
-// router.post('/otp-verify', (req, res) => {
-//   // let email=req.body.email
-//   // let otp=req.body.otp
-//   console.log(req.body)
-//   userHelper.otpVerify(req.body).then((id) => {
-//     res.json({ "success": true, "user_id": id })
-//   }).catch((dat) => {
-//     res.json({ "success": false, "val": dat })
-//   })
-
-// })
-
-
-
-
-
 router.post('/photo-upload', (req, res) => {
-  console.log(req.files.myFile)
-  let myImg = req.files.myFile;
+  // console.log(req.files.myFile)
+  console.log(req.body.url);
+  console.log(req.body.u_id);
+  // let myImg = req.files.myFile;
  
-  myImg.mv(`${__dirname}/../user_images/${myImg.name}.jpg`)
-    .then(() => {
+  // myImg.mv(`${__dirname}/../user_images/${myImg.name}.jpg`)
+  //   .then(() => {
      
       profile.findOneAndUpdate(
-        { user_id:myImg.name},
-        {photo:`${myImg.name}.jpg` },
+        { user_id:req.body.u_id},
+        {photo:req.body.url },
         { useFindAndModify: false }
       ).then((dat)=>{
          if(dat){
@@ -127,18 +98,67 @@ router.post('/photo-upload', (req, res) => {
       }).catch((err)=>{
         console.log(err);
       })
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json({ success: false, err: err })
+    
+  //   .catch((err) => {
+  //     console.log(err);
+  //     res.json({ success: false, err: err })
 
-    })
+  //   })
+})
+
+router.post('/doctor-photo-upload', (req, res) => {
+  // console.log(req.files.myFile)
+  console.log(req.body.url);
+  console.log(req.body.d_id);
+  // let myImg = req.files.myFile;
+ 
+  // myImg.mv(`${__dirname}/../user_images/${myImg.name}.jpg`)
+  //   .then(() => {
+     
+      doctor.findOneAndUpdate(
+        { _id:req.body.d_id},
+        {photo:req.body.url },
+        { useFindAndModify: false }
+      ).then((dat)=>{
+         if(dat){
+           res.json({success:true})
+         }
+         else{
+          res.json({ success: false })
+         }
+      }).catch((err)=>{
+        console.log(err);
+      })
+    
+  //   .catch((err) => {
+  //     console.log(err);
+  //     res.json({ success: false, err: err })
+
+  //   })
 })
 
 router.post('/admin/addDoctor',(req,res)=>{
   console.log(req.body.doctor);
   let obj=req.body.doctor;
   doctor.create(obj).then((dat)=>{
+    if(dat){
+      res.json({success:true,doctor_id:dat._id})
+    }
+    else{
+      res.json({success:false})
+    }
+  }).catch((err)=>{
+      res.json({success:false})
+  })
+
+
+
+})
+
+router.post('/admin/deleteDoctor',(req,res)=>{
+  console.log(req.body.doctor_id);
+  console.log(req.body.doctor_id);
+  doctor.deleteOne({_id:req.body.doctor_id}).then((dat)=>{
     if(dat){
       res.json({success:true})
     }

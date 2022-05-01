@@ -9,8 +9,11 @@ const doctorSchema = new mongoose.Schema({
     gender:String,
     phone:Number,
     email:String,
+    qualification:String,
     patients:Array,
     appointments:Array,
+    age:String,
+    photo:""
     
   
 });
