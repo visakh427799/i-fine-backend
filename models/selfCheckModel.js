@@ -9,6 +9,7 @@ const selfCheckSchema = new mongoose.Schema({
          disease_type:String,
          date_uploaded:Date,
          questions:[
+             
 
          ],
          answers:[

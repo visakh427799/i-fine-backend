@@ -15,7 +15,7 @@ router.post('/signin', (req, res) => {
   console.log(req.body);
   userHelper.doSignin(req.body).then((id) => {
     // console.log("Password correct");
-    res.json({ "success": true, "user_id": id });
+    res.json({ "success": true, "u_id": id });
   }).catch((err) => {
     res.json({ "success": false });
   })

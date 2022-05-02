@@ -13,7 +13,7 @@ const doctorSchema = new mongoose.Schema({
     patients:Array,
     appointments:Array,
     age:String,
-    photo:""
+    photo:String,
     
   
 });

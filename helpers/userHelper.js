@@ -11,22 +11,23 @@ const otpGenerator= require('../utils/otpGenerator')
 module.exports={
 
 doSignin:(dat)=>{
-  let data=dat.user;
-
+  let data=dat;
+console.log(data);
   return new Promise((resolve,reject)=>{
 
-  //   user.findOne({email:data.email,password:data.password}).then((resp)=>{
-  //    if(resp){
-  //      resolve(resp._id)
-  //    }
-  //    else{
-  //      reject()
-  //    }
+    user.findOne({email:data.email,password:data.password}).then((resp)=>{
+     if(resp){
+       console.log("inside");
+       resolve(resp._id)
+     }
+     else{
+       reject()
+     }
 
-  //   }).catch((err)=>{
+    }).catch((err)=>{
      
-  //      reject(err)
-  //   })
+       reject(err)
+    })
 
   })
    
