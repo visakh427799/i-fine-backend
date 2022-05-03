@@ -5,6 +5,7 @@ const userHelper = require('../helpers/userHelper');
 const profile = require('../models/profileModel');
 const adminHelper = require('../helpers/adminHelper');
 const doctor = require('../models/doctorModel')
+const specialization=require('../models/specializationModel')
 //get routes
 router.get('/', (req, res) => {
   res.send("Good to go ")
@@ -142,7 +143,26 @@ router.post('/admin/addDoctor',(req,res)=>{
   let obj=req.body.doctor;
   doctor.create(obj).then((dat)=>{
     if(dat){
-      res.json({success:true,doctor_id:dat._id})
+
+      specialization.findOne({specialization_type:obj.specialization}).then((s)=>{
+         let dts=[...s.doctors]
+         dts.push(dat._id)
+          specialization.findOneAndUpdate({specialization_type:obj.specialization},  
+        {doctors:dts },
+        { useFindAndModify: false }).then((u)=>{
+           res.json({success:true,doctor_id:dat._id})
+
+        }).catch((err)=>{
+          res.json({success:false})
+
+        })
+      }).catch((err)=>{
+        res.json({success:false})
+
+      })
+     
+     
+     
     }
     else{
       res.json({success:false})
@@ -174,6 +194,53 @@ router.post('/admin/deleteDoctor',(req,res)=>{
 })
 
 
+router.post('/admin/addSpecialization',(req,res)=>{
+  console.log(req.body);
+  let obj={
+    
+      specialization_type:req.body.spec,
+      specialization_diseases:req.body.personName,
+      doctors:[]
+  };
+  specialization.create(obj).then((dat)=>{
+    if(dat){
+      res.json({success:true})
+    }
+    else{
+      res.json({success:false})
+    }
+  }).catch((err)=>{
+      res.json({success:false})
+  })
+
+
+
+})
+
+router.post('/findDoctors',(req,res)=>{
+  specialization.find(
+    {specialization_diseases: {$in:req.body.personName} }
+
+
+  ).then((resp)=>{
+    console.log(resp);
+     
+    let dctrs=[];
+
+    resp.map((dat)=>{
+      dctrs.push(...dat.doctors)
+    })
+    console.log(dctrs);
+
+    doctor.find({_id:{$in:dctrs}}).then((data)=>{
+      res.json({success:true,data:data})
+    }).catch(()=>{
+      res.json({success:false})
+    })
+
+
+  })
+})
 
 
 
