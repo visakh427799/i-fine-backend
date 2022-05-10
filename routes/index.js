@@ -5,6 +5,7 @@ const userHelper = require('../helpers/userHelper');
 const profile = require('../models/profileModel');
 const adminHelper = require('../helpers/adminHelper');
 const doctor = require('../models/doctorModel')
+const certificate=require('../models/certificateModel')
 const specialization=require('../models/specializationModel')
 //get routes
 router.get('/', (req, res) => {
@@ -242,6 +243,71 @@ router.post('/findDoctors',(req,res)=>{
   })
 })
 
+router.get('/getAllSpecializations',(req,res)=>{
+    specialization.find({}).then((resp)=>{
+      if(resp){
+        res.json({success:true,data:resp})
+      }
+      else{
+        res.json({success:false})
+      }
+    })
+})
+
+router.post('/getAllCertificates',(req,res)=>{
+
+  certificate.find({user_id:req.body.u_id}).then((d)=>{
+    if(d){
+      res.json({success:true,data:d})
+       console.log(d);
+    }
+    else{
+      console.log("inside");
+      res.json({success:false})
+    }
+
+  }).catch((err)=>{
+    console.log(err);
+    res.json({success:false})
+  })
+    
+})
+
+router.post("/uploadCertificate",(req,res)=>{
+  console.log(req.body);
+
+  const timeElapsed = Date.now();
+  const today = new Date(timeElapsed);
+  const todayDate=today.toDateString();
+
+  let obj={
+    certificate_name:"",
+    user_id:req.body.u_id,
+    certificate_url:req.body.url,
+    date_uploaded:todayDate,
+    certificate_viewed:false,
+  }
+ 
+  certificate.create(obj).then((resp)=>{
+    if(resp){
+      res.json({success:true})
+    }
+    else{
+      res.json({success:false})
+    }
+  }).catch((err)=>{
+      res.json({success:false})
+  })
+})
+
+router.post('/getDoctorBySpec',(req,res)=>{
+  console.log(req.body.spec); 
+  doctor.find({specialization:req.body.spec}).then((data)=>{
+    res.json(({success:true,data:data}))
+  }).catch(()=>{
+    res.json({success:false})
+  })
+})
 
 
 module.exports = router;

@@ -4,6 +4,16 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cors = require('cors')
+
+
+const io = require("socket.io")(server, {
+	cors: {
+		origin: "*",
+		methods: [ "GET", "POST" ]
+	}
+});
+
+
 var cookieParser = require('cookie-parser');
 require('./dbconnection');
 var logger = require('morgan');
@@ -43,6 +53,23 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+
+io.on("connection", (socket) => {
+	socket.emit("me", socket.id);
+
+	socket.on("disconnect", () => {
+		socket.broadcast.emit("callEnded")
+	});
+
+	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+	});
+
+	socket.on("answerCall", (data) => {
+		io.to(data.to).emit("callAccepted", data.signal)
+	});
 });
 
 module.exports = app;
