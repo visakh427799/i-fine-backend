@@ -6,12 +6,12 @@ var path = require('path');
 var cors = require('cors')
 
 
-const io = require("socket.io")(server, {
-	cors: {
-		origin: "*",
-		methods: [ "GET", "POST" ]
-	}
-});
+// const io = require("socket.io")(server, {
+// 	cors: {
+// 		origin: "*",
+// 		methods: [ "GET", "POST" ]
+// 	}
+// });
 
 
 var cookieParser = require('cookie-parser');
@@ -56,20 +56,20 @@ app.use(function(err, req, res, next) {
 });
 
 
-io.on("connection", (socket) => {
-	socket.emit("me", socket.id);
+// io.on("connection", (socket) => {
+// 	socket.emit("me", socket.id);
 
-	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded")
-	});
+// 	socket.on("disconnect", () => {
+// 		socket.broadcast.emit("callEnded")
+// 	});
 
-	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
-	});
+// 	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+// 		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+// 	});
 
-	socket.on("answerCall", (data) => {
-		io.to(data.to).emit("callAccepted", data.signal)
-	});
-});
+// 	socket.on("answerCall", (data) => {
+// 		io.to(data.to).emit("callAccepted", data.signal)
+// 	});
+// });
 
 module.exports = app;
