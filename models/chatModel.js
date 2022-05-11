@@ -4,21 +4,16 @@ const Schema = mongoose.Schema;
 const chatSchema = new mongoose.Schema({
  
     user_id:String,
+    doctor_id:String,
     
     chats:[
         {
-            doctor_id:String,
-            user_messages:[
-                {
-                    msg_time:String,
-                    msg_text:String,
-                }
-            ],
-            doctor_messages:[
-                {    msg_time:String,
-                    msg_text:String,
-                }
-            ],
+           
+         msg_time:String,
+         msg_text:String,
+         is_user:Boolean,
+                
+           
             
         }
     ]

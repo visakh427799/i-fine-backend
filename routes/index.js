@@ -312,55 +312,166 @@ router.post('/getDoctorBySpec',(req,res)=>{
 
 router.post('/getChats',(req,res)=>{
 
-    chat.find({user_id:req.body.u_id,doctor_id:req.body.doctor_id}).then((dat)=>{
+    chat.findOne({user_id:req.body.u_id,doctor_id:req.body.doctor_id}).then((dat)=>{
     if(dat){
-      // let msgs=dat.chats;
+     
       res.json(({success:true,data:dat}))
+    }
+    else{
+      res.json(({success:false}))
+
     }
   })
 
 
 })
 router.post('/sendMessage',(req,res)=>{
+   
 
-  console.log(req.body);
-  let usrMsg={
-    msg_time:"1-8-2022",
-    msg_text:req.body.message,
-  }
-  let dtrMsg={
-    msg_time:"1-8-2022",
-    msg_text:"",
-  }
-  let newMsg={
-      doctor_id:req.body.doctor,
-      user_messages:usrMsg,
-      doctor_messages:dtrMsg,
-  }
 
-  let chatArray=[]
-  chatArray.push(newMsg)
-  let obj={
-    user_id:req.body.u_id,
-    chats:chatArray,
+  chat.findOne({user_id:req.body.u_id,doctor_id:req.body.doctor}).then((dat)=>{
+    if(dat){
+    //  console.log(dat);
 
-  }
+     let arr=[...dat.chats];
+     console.log(arr);
 
-  chat.create(obj).then((d)=>{
-   if(d){
-    res.json(({success:true}))
-   }
+     let usrMsg={
+      msg_time:"1-8-2022",
+      msg_text:req.body.message,
+      is_user:true,
+    }
+    
+  
+  
+    
+    arr.push(usrMsg)
+    
+  
+    chat.findOneAndUpdate({user_id:req.body.u_id,doctor :req.body.doctor},{chats:arr},{ useFindAndModify: false }).then((d)=>{
+     if(d){
+      res.json(({success:true}))
+     }
+    })
+         
+
+
+      // res.json(({success:true,data:dat}))
+    }
+    else{
+      let usrMsg={
+        msg_time:"1-8-2022",
+        msg_text:req.body.message,
+        is_user:true,
+      }
+      
+    
+    
+      let chatArray=[]
+      chatArray.push(usrMsg)
+       let obj={
+            user_id:req.body.u_id,
+            doctor_id:req.body.doctor,
+            chats:chatArray,
+    
+       }
+    
+      chat.create(obj).then((d)=>{
+       if(d){
+        res.json(({success:true}))
+       }
+      })
+    
+    }
   })
 
-  // chat.find({user_id:req.body.u_id,doctor_id:req.body.doctor}).then((dat)=>{
-  //   if(dat){
-  //     let msgs=dat.chats;
-  //     console.log(msgs);
-  //   }
-  // })
+
+  
+
+})
+
+router.post('/doctor/doctor-signin',(req,res)=>{
+
+  doctor.findOne({email:req.body.email}).then((dat)=>{
+    if(dat){
+      res.json({success:true,d_id:dat._id})
+    }
+  })
+    
+})
+
+router.post('/doctor/getDoctorDetails',(req,res)=>{
+  doctor.findOne({_id:req.body.d_id}).then((d)=>{
+    res.json({success:true,dtr:d})
+  })
+})
+
+
+router.post('/sendMessage-user',(req,res)=>{
+   
+
+
+  chat.findOne({user_id:req.body.doctor,doctor_id:req.body.d_id}).then((dat)=>{
+    if(dat){
+    //  console.log(dat);
+
+     let arr=[...dat.chats];
+     console.log(arr);
+
+     let usrMsg={
+      msg_time:"1-8-2022",
+      msg_text:req.body.message,
+      is_user:false,
+    }
+    
+  
+  
+    
+    arr.push(usrMsg)
+    
+  
+    chat.findOneAndUpdate({user_id:req.body.doctor,doctor :req.body.d_id},{chats:arr},{ useFindAndModify: false }).then((d)=>{
+     if(d){
+      res.json(({success:true}))
+     }
+    })
+         
+
+
+      // res.json(({success:true,data:dat}))
+    }
+    else{
+      let usrMsg={
+        msg_time:"1-8-2022",
+        msg_text:req.body.message,
+        is_user:true,
+      }
+      
+    
+    
+      let chatArray=[]
+      chatArray.push(usrMsg)
+       let obj={
+            user_id:req.body.u_id,
+            doctor_id:req.body.doctor,
+            chats:chatArray,
+    
+       }
+    
+      chat.create(obj).then((d)=>{
+       if(d){
+        res.json(({success:true}))
+       }
+      })
+    
+    }
+  })
+
+
   
 
 })
 
 
 module.exports = router;
+

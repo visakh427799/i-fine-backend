@@ -14,6 +14,7 @@ const doctorSchema = new mongoose.Schema({
     appointments:Array,
     age:String,
     photo:String,
+    password:String,
     
   
 });
